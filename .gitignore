@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Data: tracked by DVC, not git (dvc add also writes data/raw/.gitignore)
+data/processed/
+
+# MLflow model files; the tool reads only mlflow.db, which IS committed
+mlruns/
+mlartifacts/
+
+# Our copies of the problem sheet and handbook, and the hand-off notes
+docs/
+HANDOFF.md
+
+.DS_Store
+handoff/
