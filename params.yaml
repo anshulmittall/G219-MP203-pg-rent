@@ -1,0 +1,69 @@
+# All settings for the project live here. Code reads this file with
+# yaml.safe_load (see src/pgrent/config.py), so nothing is hard-coded twice.
+
+data:
+  train: data/raw/train.csv
+  later: data/raw/later.csv
+  holdout: data/raw/holdout_features.csv
+  clean_train: data/processed/train_clean.csv
+
+columns:
+  id: record_id
+  date: date
+  target: rent_rs
+  group: locality            # the "office" column used for unit checks and MAE per group
+  numeric:
+    - distance_to_campus_km
+    - room_area_sqft
+    - sharing
+    - meals_per_day
+    - building_age_yr
+    - wifi_mbps
+  categorical:
+    - furnishing
+    - locality
+
+checks:
+  # Special numbers people type instead of leaving a blank.
+  sentinel_candidates: [-1, -99, -999, -9999, 99, 999, 9999]
+  sentinel_min_count: 5          # must repeat at least this often to count
+  unit_factors: [10, 12, 60, 100, 1000]
+  unit_ratio_trigger: 5          # a group median 5x off the others is suspicious
+  stuck_min_days: 7              # a run of identical values this long is "stuck"
+  typo_gap_ratio: 3              # a jump this big in the sorted target = typos above it
+  leak_min_spearman: 0.95
+
+model:
+  validation_fraction: 0.2       # last 20% of cleaned train (by date) is validation
+  random_state: 42
+  # Each entry becomes one MLflow run. The best one (lowest mae_val) becomes v1.
+  candidates:
+    - name: ridge_a1
+      type: ridge
+      params: {alpha: 1.0}
+    - name: ridge_a10
+      type: ridge
+      params: {alpha: 10.0}
+    - name: random_forest
+      type: random_forest
+      params: {n_estimators: 300, max_depth: 12, min_samples_leaf: 2}
+    - name: gradient_boosting
+      type: gradient_boosting
+      params: {n_estimators: 300, learning_rate: 0.05, max_depth: 3}
+
+mlflow:
+  tracking_uri: sqlite:///mlflow.db
+  experiment_name: mp203-pg-rent
+  registered_model_name: mp203-rent-model
+  champion_alias: champion
+
+monitoring:
+  psi_bins: 10
+  later_fit_fraction: 0.7        # v2 trains on the first 70% of later.csv (by date)
+  later_weight_options: [1, 5, 20, 100]   # how much more a later.csv row counts in v2
+  promote_if_mae_drop_at_least: 0.15
+
+paths:
+  model: models/model.joblib
+  predictions: predictions/holdout_predictions.csv
+  monitoring_report: reports/monitoring.json
