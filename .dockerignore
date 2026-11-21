@@ -1,0 +1,19 @@
+# Keep the image small and free of data and secrets.
+.git
+.github
+.venv
+.dvc
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+docs/
+mlruns/
+mlartifacts/
+mlflow.db
+reports/
+predictions/
+tests/
+k8s/
+src/
+*.md
