@@ -1,0 +1,22 @@
+{
+  "psi": {
+    "distance_to_campus_km": 0.0361,
+    "room_area_sqft": 6.6331,
+    "sharing": 0.056,
+    "meals_per_day": 0.0084,
+    "building_age_yr": 0.0793,
+    "wifi_mbps": 0.0209
+  },
+  "most_drifted_feature": "room_area_sqft",
+  "mae_by_group": {
+    "Market Side": 1645.89,
+    "Sector East": 1653.99,
+    "Sector West": 7597.94
+  },
+  "worst_served_group": "Sector West",
+  "mae_v1_on_check": 5241.87,
+  "mae_v2_on_check": 1050.98,
+  "decision": "promote",
+  "v2_run_id": "82b2768495564d39a1ec76849f686bbd",
+  "champion_version": 2
+}

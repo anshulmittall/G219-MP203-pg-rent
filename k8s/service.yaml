@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mp203-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: mp203-api            # sends traffic to the Pods of the Deployment
+  ports:
+    - port: 80                # port the Service listens on
+      targetPort: 8000        # containerPort of the Pods
+      protocol: TCP

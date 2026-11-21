@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mp203-api
+  labels:
+    app: mp203-api
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: mp203-api          # must match the Pod labels below
+  template:
+    metadata:
+      labels:
+        app: mp203-api
+    spec:
+      containers:
+        - name: mp203-api
+          image: mp203-api:1.0
+          imagePullPolicy: IfNotPresent   # use the locally built image
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          # Ready to receive traffic? Checked early and often.
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          # Still alive? Waits longer so a slow start is not killed.
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
